@@ -1,13 +1,23 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      localStorage.setItem("user", JSON.stringify({ email }));
+      setIsSubmitting(false);
+      navigate("/account");
+    }, 500);
   };
 
+  const isButtonDisabled = isSubmitting || !email || !password;
   return (
     <div className="aspect-[9/16] h-full flex flex-col items-start justify-between bg-[#f7f8f9] p-6">
       <div className="top w-full">
@@ -35,6 +45,7 @@ const Login = () => {
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -54,13 +65,19 @@ const Login = () => {
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
           <button
             type="submit"
-            className={`text-white font-semibold w-full text-center bg-[#302644] hover:bg-[#5d0ec0] p-2 rounded-md mb-2 `}
-          >Login</button>
+            className={`text-white font-semibold w-full text-center bg-[#302644] hover:bg-[#5d0ec0] p-2 rounded-md mb-2 ${
+              isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={isButtonDisabled}
+          >
+            {isSubmitting ? "Logging in..." : "Login"}
+          </button>
         </form>
       </div>
     </div>
