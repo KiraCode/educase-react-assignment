@@ -1,6 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const Signup = () => {
+const Signup = (setName, setMail) => {
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [company, setCompany] = useState("");
+  const [isAgency, setIsAgency] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  const isButtonDisabled =
+    isSubmitting ||
+    !fullName ||
+    !phone ||
+    !email ||
+    !password ||
+    !company ||
+    !isAgency;
+
+  const handleSubmit = () => {
+    localStorage.setItem("user", JSON.stringify({ fullName, email }));
+    navigate("/account");
+  };
   return (
     <div className="aspect-[9/16] h-full flex flex-col items-start justify-between pt-10 bg-[#f7f8f9] p-6">
       <div className="top w-full">
@@ -22,6 +45,9 @@ const Signup = () => {
                 type="text"
                 placeholder="Enter full name"
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -39,6 +65,9 @@ const Signup = () => {
                 type="tel"
                 placeholder="Enter phone number"
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -56,6 +85,9 @@ const Signup = () => {
                 type="email"
                 placeholder="Enter email address"
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -73,6 +105,9 @@ const Signup = () => {
                 type="password"
                 placeholder="Enter password"
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -90,6 +125,9 @@ const Signup = () => {
                 type="text"
                 placeholder="Enter company name"
                 className="w-full border-none outline-none text-gray-900 px-0 bg-transparent"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                disabled={isSubmitting}
               />
             </div>
           </div>
@@ -99,19 +137,35 @@ const Signup = () => {
               <input
                 type="radio"
                 name="agency"
+                value="yes"
+                checked={isAgency === "yes"}
+                onChange={() => setIsAgency("yes")}
+                disabled={isSubmitting}
               />{" "}
               Yes
             </label>
             <label className="flex items-center gap-2 text-gray-700 text-sm">
-              <input type="radio" name="agency" /> No
+              <input
+                type="radio"
+                name="agency"
+                value="no"
+                checked={isAgency === "no"}
+                onChange={() => setIsAgency("no")}
+                disabled={isSubmitting}
+              />{" "}
+              No
             </label>
           </div>
         </form>
       </div>
       <button
-        className={`text-white font-semibold w-full text-center bg-[#6c25ff] hover:bg-[#5d0ec0] p-2 rounded-md mb-2 `}
+        onClick={handleSubmit}
+        className={`text-white font-semibold w-full text-center bg-[#6c25ff] hover:bg-[#5d0ec0] p-2 rounded-md mb-2 ${
+          isButtonDisabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={isButtonDisabled}
       >
-        Create Account
+        {isSubmitting ? "Creating Account..." : "Create Account"}
       </button>
     </div>
   );
